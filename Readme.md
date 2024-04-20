@@ -1,1 +1,1 @@
-# This is a new app called Querify!s
+#This is a new app called Querify!
