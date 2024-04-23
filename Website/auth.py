@@ -71,7 +71,7 @@ def login():
         if user:
            
             print("User: " ,user.emailAddress)
-            print("user password", user.password)
+            print("user password", user.password) # passowrd
         
            
     return render_template('Login.html')
