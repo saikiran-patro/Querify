@@ -1,7 +1,41 @@
+
+:root {  /* Define variables within the :root selector for global scope */
+    --backgroundColor: #0C2D57;
+    --fontColor: #FC6736;
+    --font-size-base: 16px;
+  }
 body{
 
 
     margin: 0px;
+}
+/* Navigation Container */
+.navContainer{
+
+    background:var(--backgroundColor);
+    padding: 15px;
+    color:#EFECEC;
+    display: flex;
+    justify-content:space-between;
+    align-items:center;
+    
+}
+.rightHeader{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 20px;
+}
+.logoutButton{
+    outline: none;
+    border: none;
+    background:var(--fontColor);
+    color: var(--backgroundColor);
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 5px 10px;
+    cursor: pointer;
 }
 .box{
 

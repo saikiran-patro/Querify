@@ -40,8 +40,39 @@
                 </form>
                </div>
     </div>
+    <div class="errorPopUp">
+      <div class="errorMessage" >The message</div>
+      <img class="closeLogo" src="{{ url_for('static', filename='Images/Close.svg') }}">
+  </div>
 
-     
-    
+ 
+  
 </body>
+<script>
+
+let message= '{{ message }}'
+let category= '{{ category }}'
+console.log(category)
+const popUp=document.querySelector('.errorPopUp')
+if(category=='False'){
+  
+ 
+  popUp.style.top='5%';
+  popUp.style.display='flex';
+  document.querySelector('.errorMessage').innerHTML=message;
+  }
+else if(category=='True'){
+  popUp.style.top='5%';
+  popUp.style.background='#C6EBC5'
+  popUp.style.display='flex';
+  document.querySelector('.errorMessage').innerHTML=message;
+  document.querySelector('.errorMessage').style.color='#76885B'
+}
+  document.querySelector('.closeLogo').addEventListener("click",()=>{
+    popUp.style.display='none'
+
+  })
+
+
+</script>
 </html>
