@@ -20,15 +20,25 @@
         <span style="font-size: 18px;;">Querify</span>
       </div>
       <div class="rightHeader">
+        <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}"/>Post</button>
         <span style="font-size:12px">Sai Kiran</span>
+   
         <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
-        <button type="button" class="logoutButton"  onclick="window.location.href='/logout'">Logout</button>
+        <img  class="logoutButton" alt="Logout" src="{{ url_for('static', filename='Images/Poweroff.svg')}}" onclick="window.location.href='/logout'"/>
 
       </div>
 
      
     </nav>
 </header>
+ <div class="container">
+     
+  <ul>
+    {% for item in all_posts %}
+        <li>{{ item.title }} - {{ item.content | safe }}</li>
+    {% endfor %}
+</ul>
+ </div>
     <div class="errorPopUp">
         <div class="errorMessage" >The message</div>
         <img class="closeLogo" src="{{ url_for('static', filename='Images/Close.svg') }}">
@@ -39,6 +49,9 @@
 
     let message= '{{ message }}'
     let category= '{{ category }}'
+    let all_posts= '{{ all_posts }}'
+    console.log('all_posts : ',all_posts)
+   
     console.log(category)
     const popUp=document.querySelector('.errorPopUp')
     if(category=='False'){

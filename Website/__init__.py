@@ -30,6 +30,7 @@ def create_app():
     # Create tables outside the context for reliable execution
     with app.app_context():
         db.create_all()
+        print("--- Creating....->")
         print("Database tables created successfully!")
     login_manager = LoginManager()
     login_manager.login_view='auth.login'

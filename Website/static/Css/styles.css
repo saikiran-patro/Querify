@@ -9,7 +9,37 @@ body{
 
     margin: 0px;
 }
+.hide{
+
+    display:none;
+
+}
+.visibleFlex{
+    display:flex;
+
+}
+.visibleBlock{
+    display: block;
+}
 /* Navigation Container */
+
+.postButton{
+    background:var(--fontColor);
+    border: none;
+    border-radius: 5px;;
+    padding: 5px 10px;
+    outline: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--backgroundColor);
+    font-weight: bold;
+    gap: 8px;
+    cursor: pointer;
+}
+.postButton img{
+    width:18px;
+}
 .navContainer{
 
     background:var(--backgroundColor);
@@ -24,17 +54,11 @@ body{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    gap: 20px;
+    gap: 25px;
+    
 }
 .logoutButton{
-    outline: none;
-    border: none;
-    background:var(--fontColor);
-    color: var(--backgroundColor);
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: bold;
-    padding: 5px 10px;
+    
     cursor: pointer;
 }
 .box{

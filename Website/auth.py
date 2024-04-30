@@ -65,7 +65,7 @@ def login():
     if request.method == 'POST':
 
         data = request.form
-
+        print(data)
 
         emailAddress=data.get('email')
         password=data.get('password')
@@ -95,6 +95,7 @@ def logout():
 @auth.route('/signup',methods=['GET', 'POST'])
 
 def signup():
+    print("signup called")
     if request.method == 'POST':
        data= request.form
        firstName=data.get('firstName')
@@ -122,7 +123,7 @@ def signup():
             new_user= User(emailAddress=emailAddress, firstName=firstName, lastName=lastName, password=generate_password_hash(password1, method='pbkdf2:sha256'))
             db.session.add(new_user)
             db.session.commit()
-            login_user(user,remember=True)
+            login_user(new_user,remember=True)
             return redirect(url_for('views.home',message="Account created successfully!", category=True ))
           #return render_template('Signup.html', message="Account created successfully!", category=True )
        
