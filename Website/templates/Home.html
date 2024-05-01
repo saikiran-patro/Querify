@@ -21,7 +21,7 @@
       </div>
       <div class="rightHeader">
         <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}"/>Post</button>
-        <span style="font-size:12px">Sai Kiran</span>
+        <span style="font-size:12px">{{ username | safe }}</span>
    
         <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
         <img  class="logoutButton" alt="Logout" src="{{ url_for('static', filename='Images/Poweroff.svg')}}" onclick="window.location.href='/logout'"/>
@@ -31,13 +31,21 @@
      
     </nav>
 </header>
- <div class="container">
+ <div class="containerHome">
      
-  <ul>
+ 
     {% for item in all_posts %}
-        <li>{{ item.title }} - {{ item.content | safe }}</li>
-    {% endfor %}
-</ul>
+      <div class="postContainer">
+        <div class="postHeader"><img src="{{ url_for('static', filename='Images/User.svg')}}"/> <span>Sai Kiran Patro</span></div>
+        <div class="postContent">
+          <h2>{{ item.title }}</h2>
+          {{ item.content | safe }}
+        </div>
+        <div class="postActions">
+          <img src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/><img src="{{ url_for('static', filename='Images/Comment.svg')}}"/>
+        </div>
+      </div>
+      {% endfor %}
  </div>
     <div class="errorPopUp">
         <div class="errorMessage" >The message</div>
@@ -50,6 +58,8 @@
     let message= '{{ message }}'
     let category= '{{ category }}'
     let all_posts= '{{ all_posts }}'
+    let firstName='{{ username }}'
+    console.log(firstName)
     console.log('all_posts : ',all_posts)
    
    

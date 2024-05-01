@@ -17,6 +17,15 @@ def home():
         serverCategory=request.args.get('category')
     
         return render_template('Home.html',message=serverMessage, category=serverCategory)
+
+def delete_all_posts():
+    # Delete all posts using query.delete()
+    db.session.query(Post).delete()
+
+    # Commit the changes to the database
+    db.session.commit()
+    print("All posts deleted successfully!")
+
 @views.route('/post', methods=['POST','GET'])
 @login_required
 def post():
@@ -28,6 +37,7 @@ def post():
         new_post=Post(userId=current_user.id, title=title,content=editorContent)
         db.session.add(new_post)
         db.session.commit()
+        #delete_all_posts()
 
         
         return redirect(url_for('views.home',message="Post Successful", category=True ))
