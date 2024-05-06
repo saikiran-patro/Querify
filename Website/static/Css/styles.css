@@ -9,6 +9,10 @@ body{
 
     margin: 0px;
 }
+.postContent p{
+
+    margin-bottom: 1px !important;
+}
 .hide{
 
     display:none !important;
@@ -134,12 +138,21 @@ body{
     gap: 20px;
     margin-top: 20px
 }
+.postContentContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    position: relative;
+    align-items: center;
+
+}
 .postContainer{
-    border: 2px solid black;
+    border: none;
     padding: 20px;
-    border-radius: 20px;
-    width: 50%;
-    background-color: #EEEDEB;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 100%;    
+  
 }
 .postHeader{
     display: flex;
@@ -149,7 +162,26 @@ body{
 }
 .postContent{
     margin-top: 15px;
+    background: #f2f4f5;
+    padding: 10px;
+    border-radius: 10px;
+    margin-left: 0px;
+    margin-bottom: 12px;
+    height: 200px;
+    transition: height 0.5s ease-in-out;
+    overflow: hidden; 
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    width: 100%;
 }
+.sideLine{
+    height:200px;
+    width: 2px;
+    background: black;
+    margin-left: 10px;
+    border-radius: 10px;
+
+}
+
 .postActions{
     display: flex;
     flex-direction: row;
@@ -157,13 +189,46 @@ body{
     align-items: center;
     gap: 5px;
 }
+.expanded
+{
+    height:auto !important;
+    overflow: visible;
+}
+.dateActionContainer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.postedDate{
+    font-size: 12px;
+    color: black;
+    font-style: italic;
+}
 .postActions img{
     width:24px;
+    cursor: pointer;
 }
+
+
 h2{
     font-size:24px !important;
 }
+.readMore{
 
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+.read-more{
+    outline: none;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: #3a3a3a;
+    color:white;
+    cursor: pointer;
+}
 /* Create a post section */
 
 #title{

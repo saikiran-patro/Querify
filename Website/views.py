@@ -1,16 +1,48 @@
 from flask import Blueprint,render_template,request,redirect,url_for
 from flask_login import login_required,current_user
-from .models import Post
+from .models import Post,Likes
 from .import db
+from .models import User
 views=Blueprint('views',__name__)
+from sqlalchemy import func
+
+def get_likes_count():
+    all_posts=Post.query.all()
+    likesCount=[]
+    for post in all_posts:
+        likeCount=Likes.query.filter_by(postId=post.id).count()
+        likesCount.append(likeCount)
+    return likesCount    
+
+def likes_count_by_id(postId):
+    likeCount=Likes.query.filter_by(postId=postId).count()
+    
+    return likeCount
+def update_count_by_id(postId):
+    new_like_rec=Likes(postId=postId)
+    db.session.add(new_like_rec)
+    db.session.commit()
+
+
 
 @views.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
     if request.method == 'GET':
         all_posts=Post.query.all()
+        userPostInfo=[]
+        likesCount=get_likes_count()
+        index=0
+        for post in all_posts:
+       
+            user=User.query.filter_by(id=post.userId).first()
+            userObject={'userFullName':user.firstName+" "+user.lastName,'postedDate':"-".join(str(post.date)[0:10].split('-')[::-1]),'postLikes':likesCount[index],'postId':post.id}
+            userPostInfo.append(userObject)
+            index+=1
 
-        return render_template('Home.html', all_posts=all_posts, postCategory=True)
+    
+
+        return render_template('Home.html', all_posts=all_posts[::-1],users=userPostInfo[::-1], postCategory=True)
     else:
 
         serverMessage=request.args.get('message')

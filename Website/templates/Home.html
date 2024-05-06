@@ -9,7 +9,7 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
     <title>Querify</title>
 </head>
 <body>
@@ -21,8 +21,10 @@
       </div>
       <div class="rightHeader">
         <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}"/>Post</button>
-        <span style="font-size:12px">{{ username | safe }}</span>
-   
+        {% if current_user.is_authenticated %}
+     
+        <span style="font-size:12px"> {{ current_user.firstName }}</span>
+        {% endif %}
         <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
         <img  class="logoutButton" alt="Logout" src="{{ url_for('static', filename='Images/Poweroff.svg')}}" onclick="window.location.href='/logout'"/>
 
@@ -35,15 +37,31 @@
      
  
     {% for item in all_posts %}
+    
       <div class="postContainer">
-        <div class="postHeader"><img src="{{ url_for('static', filename='Images/User.svg')}}"/> <span>Sai Kiran Patro</span></div>
-        <div class="postContent">
-          <h2>{{ item.title }}</h2>
-          {{ item.content | safe }}
+     
+        <div class="postHeader"><img src="{{ url_for('static', filename='Images/User.svg')}}"/> <span>{{ users[loop.index-1]['userFullName'] }}</span></div>
+        <div class="postContentContainer">
+
+          <div class="sideLine"></div>
+          <div class="postContent">
+            <h2>{{ item.title }}</h2>
+            {{ item.content | safe }}
+          
+          </div>
         </div>
-        <div class="postActions">
-          <img src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/><img src="{{ url_for('static', filename='Images/Comment.svg')}}"/>
+        
+        <div class="readMore">
+           <button class="read-more">Read More</button>
         </div>
+        <div class="dateActionContainer">
+          <div class="postActions">
+            <img class="likesImg" style="margin-left: 30px;" data-post-id="{{ users[loop.index-1]['postId'] }}" src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/><img src="{{ url_for('static', filename='Images/Comment.svg')}}"/>
+          </div>
+          <span class="postedDate">Posted on  {{ users[loop.index-1]['postedDate'] }}</span>
+          
+        </div>
+        <p class="postLikeCount" style="margin-left: 37px;">{{ users[loop.index-1]['postLikes'] }} likes</p>
       </div>
       {% endfor %}
  </div>
@@ -55,12 +73,90 @@
 </body>
 <script>
 
+
+/*---------------------Testing Real-time like count update--------------------*/
+var socket = io();
+document.querySelectorAll('.likesImg').forEach((img)=>{
+
+  img.addEventListener('click',()=>{
+
+    const postId = img.dataset.postId;  // Access data-post-id using dataset property
+        socket.emit('update_count', { post_id: postId });
+  })
+})
+
+
+socket.on('count_updated', function(data) {
+    const postId = data.post_id;
+    const count = data.count;
+    document.querySelectorAll('.likesImg').forEach((img)=>{
+
+
+    // Update the count only if it matches the expected post ID (implement logic here)
+    if (img.dataset.postId==postId) {
+       img.parentElement.parentElement.parentElement.querySelector('.postLikeCount').innerText = count + ' likes';
+    }
+})});
+/*---------------------------------------------------------------------------*/
+
+  const readMoreFunction = () =>{
+  const readMoreBtns = document.querySelectorAll('.read-more');
+
+readMoreBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+
+        const content = this.parentElement.parentElement.querySelector('.postContentContainer').querySelector('.postContent');
+       
+        content.classList.toggle('expanded');
+       
+        if (content.classList.contains('expanded')) {
+            this.textContent = 'Read Less';
+            this.parentElement.parentElement.querySelector('.postContentContainer').querySelector('.sideLine').style.height=Math.round(this.parentElement.parentElement.querySelector('.postContentContainer').querySelector('.postContent').offsetHeight)+'px'
+           
+        } else {
+            this.textContent = 'Read More';
+            this.parentElement.parentElement.querySelector('.postContentContainer').querySelector('.sideLine').style.height='200px'
+        }
+    });
+});
+}
+function readMoreHide(){
+
+  const myDiv = document.querySelectorAll(".postContent");
+  myDiv.forEach((div)=>{
+  div.style.height='auto'
+  
+  const height = div.offsetHeight;;
+  const parentDiv=div.parentElement.parentElement;
+  div.style.height='200px'
+  
+  if(Math.round(height)>200){
+   
+    parentDiv.querySelector('.read-more').setAttribute('class', 'read-more');
+    
+  }
+  else{
+    parentDiv.querySelector('.read-more').classList.add('hide');
+   
+  }
+ 
+
+})
+ readMoreFunction()
+
+}
+
+
+readMoreHide()
+
+
+
+
     let message= '{{ message }}'
     let category= '{{ category }}'
     let all_posts= '{{ all_posts }}'
     let firstName='{{ username }}'
-    console.log(firstName)
-    console.log('all_posts : ',all_posts)
+  
    
    
     const popUp=document.querySelector('.errorPopUp')
