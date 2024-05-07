@@ -1,7 +1,7 @@
 
 :root {  /* Define variables within the :root selector for global scope */
-    --backgroundColor: #0C2D57;
-    --fontColor: #FC6736;
+    --backgroundColor: black;
+    --fontColor: #EFECEC;;
     --font-size-base: 16px;
   }
 body{
@@ -9,14 +9,26 @@ body{
 
     margin: 0px;
 }
+
 .postContent p{
 
     margin-bottom: 1px !important;
+    color: black !important;
+}
+.postContent img{
+    width:100%;
+}
+.postContent span,strong{
+    color: black !important;
 }
 .hide{
 
     display:none !important;
 
+}
+.visibleInline{
+
+    display: inline-block !important;
 }
 .visibleFlex{
     display:flex !important;
@@ -69,7 +81,7 @@ body{
 
     display: flex;
     flex-direction: row;
-    background-color: #0C2D57;
+    background-color: var(--backgroundColor);
 
 }
 .leftContainer{
@@ -77,7 +89,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #0C2D57;
+    background-color: var(--backgroundColor);
     width: 70%;
     height: 95vh;
 }
@@ -163,6 +175,7 @@ body{
 .postContent{
     margin-top: 15px;
     background: #f2f4f5;
+    color: black !important;
     padding: 10px;
     border-radius: 10px;
     margin-left: 0px;
@@ -236,7 +249,7 @@ h2{
     margin-bottom: 15px;
     width: 100%;
     border: none;
-    border-bottom: 2px solid #f77d54;
+    border-bottom: 2px solid black;
     outline: none;
     font-size: 20px;
     font-weight: 400;
@@ -246,9 +259,9 @@ h2{
     margin: 0px auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    
     align-items: center;
-    height: 80vh;
+    height: 92vh;
     position:relative;
 }
 .postFormContainer{
@@ -263,10 +276,10 @@ h2{
     border: none;
     outline: none;
     border-radius: 8px;
-    background: #f77d54 ;
+    background:var(--backgroundColor) ;
     font-weight: bold;
     cursor: pointer;
-    color: #0C2D57;
+    color: var(--fontColor);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -340,13 +353,34 @@ h2{
 /* styling toolbar */
 .ql-toolbar{
 
-    background: #f77d54 !important;
+    background: black !important;
     border-radius: 10px !important;
     border-bottom: none !important;
     border-bottom-left-radius: 0px !important;
     border-bottom-right-radius: 0px !important;
 
 }
+.ql-snow .ql-stroke {
+    fill: none;
+    stroke: white !important;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+}
+.ql-snow .ql-picker {
+    color: white !important;
+    display: inline-block;
+    
+    font-size: 14px;
+    font-weight: 500;
+    height: 24px;
+    position: relative;
+    vertical-align: middle;
+}
 .ql-container{
     background: #F6F5F5;
+}
+.ql-picker-options{
+
+    background-color: black !important;
 }

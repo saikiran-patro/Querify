@@ -2,7 +2,7 @@ from flask import Blueprint,render_template,request,redirect,url_for
 from flask_login import login_required,current_user
 from .models import Post,Likes
 from .import db
-from .models import User
+from .models import User,get_user_id
 views=Blueprint('views',__name__)
 from sqlalchemy import func
 
@@ -22,6 +22,20 @@ def update_count_by_id(postId):
     new_like_rec=Likes(postId=postId)
     db.session.add(new_like_rec)
     db.session.commit()
+def delete_count_by_id(postId):
+    user_id = get_user_id()  
+    record = Likes.query.filter_by(postId=postId, userId=user_id).first()
+
+    if record and record.userId == user_id:
+        # Only delete if the record exists and belongs to the current user
+        db.session.delete(record)
+        db.session.commit()
+        return True  # Indicate successful deletion (optional)
+    else:
+        return False  #
+
+
+
 
 
 
@@ -36,7 +50,10 @@ def home():
         for post in all_posts:
        
             user=User.query.filter_by(id=post.userId).first()
-            userObject={'userFullName':user.firstName+" "+user.lastName,'postedDate':"-".join(str(post.date)[0:10].split('-')[::-1]),'postLikes':likesCount[index],'postId':post.id}
+            user_id = get_user_id()  
+            record = Likes.query.filter_by(postId=post.id, userId=user_id).first()
+            record = True if record else False
+            userObject={'userFullName':user.firstName+" "+user.lastName,'postedDate':"-".join(str(post.date)[0:10].split('-')[::-1]),'postLikes':likesCount[index],'postId':post.id,'postLiked':record}
             userPostInfo.append(userObject)
             index+=1
 
