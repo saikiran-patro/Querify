@@ -38,3 +38,12 @@ class Likes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     postId = db.Column(db.Integer, db.ForeignKey('post.id'))
     userId = db.Column(db.Integer, default=get_user_id)
+
+
+class Comments(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    userId = db.Column(db.Integer)
+    postId=db.Column(db.Integer, db.ForeignKey('post.id'))
+    content=db.Column(db.Text)
+    
+
