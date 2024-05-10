@@ -1,4 +1,3 @@
-from .main import app
 from datetime import datetime, timedelta
 def time_ago(date):
   now = datetime.utcnow()
@@ -24,4 +23,3 @@ def time_ago(date):
     return f"{int(weeks)} weeks ago"
 
 # Register the filter with your Flask app (usually in your app factory)
-app.jinja_env.filters['time_ago'] = time_ago
