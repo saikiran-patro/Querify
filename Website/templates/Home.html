@@ -66,7 +66,7 @@
             {% endif %}
             <img class="commentImg" data-post-id="{{ users[loop.index-1]['postId'] }}" src="{{ url_for('static', filename='Images/Comment.svg')}}"/>
           </div>
-          <span class="postedDate">Posted on  {{ users[loop.index-1]['postedDate'] }}</span>
+          <span class="postedDate">Posted on  {{ item.date | time_ago }}</span>
           
         </div>
         <p class="postLikeCount" style="margin-left: 37px;">{{ users[loop.index-1]['postLikes'] }} likes</p>

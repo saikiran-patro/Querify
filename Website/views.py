@@ -2,6 +2,8 @@ from flask import Blueprint,render_template,request,redirect,url_for
 from flask_login import login_required,current_user
 from .models import Post,Likes,Comments
 from .import db
+import datetime
+from pytz import timezone
 from .models import User,get_user_id
 views=Blueprint('views',__name__)
 from sqlalchemy import func
@@ -101,7 +103,11 @@ def post():
         data=request.form
         title=data.get('title')
         editorContent=data.get('editor')
-        new_post=Post(userId=current_user.id, title=title,content=editorContent)
+        now_utc = datetime.datetime.utcnow()
+        # Convert UTC time to user's region time zone
+        user_tz = timezone('Asia/Kolkata')
+        now_user_region = now_utc.astimezone(user_tz)
+        new_post=Post(userId=current_user.id, title=title,content=editorContent,date=now_user_region)
         db.session.add(new_post)
         db.session.commit()
         # delete_all_posts()
@@ -113,7 +119,7 @@ def post():
 @views.route('/comment/<int:post_id>', methods=['POST','GET'])
 @login_required
 def comment(post_id):
-    
+    #delete_all_comments()
     userPostInfo,postDetails=get_user_info(post_id)
     userPostInfo[0]['postLikes']=likes_count_by_id(post_id)
     print(userPostInfo)
@@ -125,18 +131,21 @@ def comment(post_id):
         postId=userPostInfo[0]['postId']
         userId=get_user_id()
         userName=get_user_name_by_user_id(userId).lower()
-        
         commentContent=data.get('comment')
-        new_comment=Comments(userId=userId,postId=postId,content=commentContent)
+        now_utc = datetime.datetime.utcnow()
+        # Convert UTC time to user's region time zone
+        user_tz = timezone('Asia/Kolkata')
+        now_user_region = now_utc.astimezone(user_tz)
+
+        new_comment=Comments(userId=userId,postId=postId,content=commentContent,date=now_user_region)
         db.session.add(new_comment)
         db.session.commit()
         # delete_all_comments()
         commentsInfo=get_comments_by_post_id(postId)
         userCommentedByList=getCommentedByList(postId)
         print(commentsInfo)
-        return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo,commentedByList=userCommentedByList)
+        return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList))
 
 
-    return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo,commentedByList=userCommentedByList)
+    return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList))
     
-

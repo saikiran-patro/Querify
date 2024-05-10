@@ -28,7 +28,10 @@
         </div>
         <div class="rightHeader">
           <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}"/>Post</button>
-          <span style="font-size:12px">Sai Kiran</span>
+          {% if current_user.is_authenticated %}
+     
+          <span style="font-size:12px"> {{ current_user.firstName }}</span>
+          {% endif %}
      
           <img src="{{ url_for('static', filename='Images/UserIcon.svg')}}" alt="User Icon"/>
           <img  class="logoutButton" alt="Logout" src="{{ url_for('static', filename='Images/Poweroff.svg')}}" onclick="window.location.href='/logout'"/>
@@ -92,14 +95,27 @@
       </div>
       <div class="commentContainer">
         <h2>Comments</h2>
-        <ul>
+         {% if lengthComments %}
             {% for comment in commentsList %}
-              <span>{{ commentedByList[loop.index-1] }}</span>
-            <li>
+
+            <div class="comment">
+                <div class="userCommented"><img src="{{ url_for('static', filename='Images/User.svg')}}"/>&nbsp;<span>{{ commentedByList[loop.index-1] }}</span></div>
+                <div class="commentContent">
                     {{ comment.content | safe}}
-                </li>
+                </div>  
+                <div class="replyComment">
+                    <span><img class="likesImg"  src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> Reply<span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                 </div>
+
+            </div>
+              
+        
+                   
+             
             {% endfor %}
-        </ul>
+         {% else %}
+            <span>No comments</span>
+         {% endif %}
         
       </div>
     </div>
@@ -112,6 +128,10 @@
   
 </body>
 <script>
+
+
+
+
 
 let message= '{{ message }}'
 let category= '{{ category }}'
@@ -184,7 +204,60 @@ else if(category=='True'){
     
 
   }
-  const readMoreFunction = () =>{
+
+// Read More Functionality for Comments
+const readMoreComment = () =>{
+  const readMoreBtns = document.querySelectorAll('.read-more-comment');
+
+readMoreBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+
+        const content = this.parentElement.parentElement.querySelector('.commentContent');
+       
+        content.classList.toggle('expanded');
+       
+        if (content.classList.contains('expanded')) {
+            this.textContent = 'Read Less';
+            
+        } else {
+            this.textContent = 'Read More';
+           }
+    });
+});
+}
+function readMoreCommentHide(){
+
+  const myDiv = document.querySelectorAll(".commentContent");
+  myDiv.forEach((div)=>{
+  div.style.height='auto'
+  
+  const height = div.offsetHeight;;
+  console.log(height)
+  const parentDiv=div.parentElement;
+  div.style.height='100px'
+  
+  if(Math.round(height)>100){
+   
+    parentDiv.querySelector('.replyComment').querySelector('.read-more-comment').setAttribute('class', 'read-more-comment');
+    
+  }
+  else {
+    parentDiv.querySelector('.replyComment').querySelector('.read-more-comment').classList.add('hide');
+   
+  }
+ 
+
+})
+ readMoreComment()
+
+}
+
+
+readMoreCommentHide()
+
+
+/*  Read More Function for Post  */
+  const readMorePost = () =>{
   const readMoreBtns = document.querySelectorAll('.read-more');
 
 readMoreBtns.forEach(btn => {
@@ -205,7 +278,7 @@ readMoreBtns.forEach(btn => {
     });
 });
 }
-function readMoreHide(){
+function readMorePostHide(){
 
   const myDiv = document.querySelectorAll(".postContent");
   myDiv.forEach((div)=>{
@@ -228,12 +301,12 @@ function readMoreHide(){
  
 
 })
- readMoreFunction()
+ readMorePost()
 
 }
 
 
-readMoreHide()
+readMorePostHide()
 //  real-time likes dislikes functionality 
 var socket = io();
 

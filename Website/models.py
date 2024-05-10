@@ -45,5 +45,6 @@ class Comments(db.Model):
     userId = db.Column(db.Integer)
     postId=db.Column(db.Integer, db.ForeignKey('post.id'))
     content=db.Column(db.Text)
+    date=db.Column(db.DateTime(timezone='Asia/Kolkata'), default=func.date(func.now()))
     
 

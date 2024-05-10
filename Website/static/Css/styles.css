@@ -84,7 +84,48 @@ body{
     padding: 3px 20px;
     cursor: pointer;
 }
+.commentContainer{
 
+    width: 100%;
+    max-width: 500px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.userCommented{
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+.commentContent{
+
+    padding: 10px 30px;
+    background: #f2f4f5;
+    margin: 10px 0px;
+    border-radius: 10px;
+    height: 100px;
+    overflow: hidden;
+}
+.comment{
+    margin: 10px 0px;
+}
+.replyComment{
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.commentDate{
+    font-style: italic;
+    padding-left: 5px;;
+    font-size: 14px;
+}
+.read-more-comment{
+
+    cursor: pointer;
+    font-style: italic;
+    font-size:12px;
+}
 .ql-bubble{
 
     background-color: var(--fontColor) !important;
