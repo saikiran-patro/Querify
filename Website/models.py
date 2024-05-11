@@ -46,5 +46,18 @@ class Comments(db.Model):
     postId=db.Column(db.Integer, db.ForeignKey('post.id'))
     content=db.Column(db.Text)
     date=db.Column(db.DateTime(timezone='Asia/Kolkata'), default=func.date(func.now()))
+
+class Reply(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    commentId=db.Column(db.Integer, db.ForeignKey('comments.id'))
+    content=db.Column(db.Text)
+    date=db.Column(db.DateTime(timezone='Asia/Kolkata'), default=func.date(func.now()))
+    repliedBy=db.Column(db.Text)
+    repliedTo=db.Column(db.Text)
+    postId=db.Column(db.Integer)
+    
+    
+
+
     
 

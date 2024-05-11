@@ -1,6 +1,6 @@
 from flask import Blueprint,render_template,request,redirect,url_for
 from flask_login import login_required,current_user
-from .models import Post,Likes,Comments
+from .models import Post,Likes,Comments,Reply
 from .import db
 import datetime
 from pytz import timezone
@@ -41,7 +41,6 @@ def get_user_info(fetchRequest):
     all_posts=Post.query.all() if fetchRequest=='all' else Post.query.filter_by(id=fetchRequest)
     userPostInfo=[]
     likesCount=get_likes_count()
-    print("likesCount", likesCount)
     index=0
     for post in all_posts:
        
@@ -57,11 +56,17 @@ def get_user_info(fetchRequest):
 def get_comments_by_post_id(postId):
     commentsInfo=Comments.query.filter_by(postId=postId).all()
     return commentsInfo
+def get_replies_to_comments_by_post_id(postId):
+    repliesInfo=dict()
+    commentsList=Comments.query.filter_by(postId=postId).all()
+    for comment in commentsList:
+        repliesList=Reply.query.filter_by(commentId=comment.id).all()
+        repliesInfo[comment.id]=repliesList if repliesList else []
+    return repliesInfo
 def get_user_name_by_user_id(userId):
 
     user=User.query.filter_by(id=userId).first()
-    print('userC')
-    print(user.firstName+" "+user.lastName)
+    
     return user.firstName+" "+user.lastName 
 def getCommentedByList(postId):
     commentedBy=[]
@@ -95,6 +100,11 @@ def delete_all_comments():
     db.session.query(Comments).delete()
     db.session.commit()
     print("All COmments deleted")
+
+def delete_all_replies():
+    db.session.query(Reply).delete()
+    db.session.commit()
+    print("All replies deleted successfully!")
 @views.route('/post', methods=['POST','GET'])
 @login_required
 def post():
@@ -122,9 +132,8 @@ def comment(post_id):
     #delete_all_comments()
     userPostInfo,postDetails=get_user_info(post_id)
     userPostInfo[0]['postLikes']=likes_count_by_id(post_id)
-    print(userPostInfo)
-    print(postDetails.first().id)
     commentsInfo=get_comments_by_post_id(post_id)
+    repliesInfo=get_replies_to_comments_by_post_id(post_id)
     userCommentedByList=getCommentedByList(post_id)
     if request.method == 'POST':
         data=request.form
@@ -136,16 +145,40 @@ def comment(post_id):
         # Convert UTC time to user's region time zone
         user_tz = timezone('Asia/Kolkata')
         now_user_region = now_utc.astimezone(user_tz)
-
         new_comment=Comments(userId=userId,postId=postId,content=commentContent,date=now_user_region)
         db.session.add(new_comment)
         db.session.commit()
         # delete_all_comments()
         commentsInfo=get_comments_by_post_id(postId)
         userCommentedByList=getCommentedByList(postId)
-        print(commentsInfo)
-        return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList))
+        return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList),repliesInfo=repliesInfo,lengthReplies=len(repliesInfo))
 
-
-    return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList))
     
+    return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList),repliesInfo=repliesInfo,lengthReplies=len(repliesInfo))
+
+
+
+@views.route('/comment/reply/<int:comment_id>', methods=['POST','GET'])
+@login_required
+
+def reply(comment_id):
+
+
+    if request.method == 'POST':
+        data=request.form
+        repliedTo=data.get('replyTo')
+        postId=data.get('postId')
+        commentId=comment_id
+        replyContent=data.get('replyContent')
+        userId=get_user_id()
+        userName=get_user_name_by_user_id(userId).lower()
+        now_utc = datetime.datetime.utcnow()
+        # Convert UTC time to user's region time zone
+        user_tz = timezone('Asia/Kolkata')
+        date = now_utc.astimezone(user_tz)
+        new_reply=Reply(commentId=commentId,content=replyContent,date=date,repliedBy=userName,repliedTo=repliedTo,postId=postId)
+        db.session.add(new_reply)
+        db.session.commit()
+        return redirect(url_for('views.comment',post_id=postId))
+    delete_all_replies()
+    return 'Replying to {}'.format(comment_id)

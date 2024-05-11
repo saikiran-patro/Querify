@@ -39,7 +39,7 @@ body{
 }
 
 /* Comment Section  */
-#addCommentContainer{
+#addCommentContainer,#replyFormContainer{
     width: 100%;
     max-width: 500px;
     padding:0px 20px 20px 20px;
@@ -83,6 +83,51 @@ body{
     outline: none;
     padding: 3px 20px;
     cursor: pointer;
+}
+.replyToComment{
+
+
+    cursor: pointer;
+}
+.replyToComment:hover()
+{
+    font-weight: bold;
+    text-decoration: underline;
+    
+}
+
+.replyButtonContainer{
+  
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 20px;
+}
+#replyCommentButton{
+
+    border-radius: 10px;
+    background-color:#3a3a3a!important;
+    padding: 5px 20px;
+    color: var(--fontColor);
+    outline: none;
+    cursor: pointer;
+   
+    
+}
+.replyto p{
+margin:2px;
+}
+.repliesContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    position: relative;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+}
+.replies{
+    width: 100%;
 }
 .commentContainer{
 

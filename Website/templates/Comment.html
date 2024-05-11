@@ -98,26 +98,77 @@
          {% if lengthComments %}
             {% for comment in commentsList %}
 
-            <div class="comment">
+            <div class="comment"  data-post-id="{{ userPostInfo['postId'] }}" data-comment-id="{{ comment.id }}">
                 <div class="userCommented"><img src="{{ url_for('static', filename='Images/User.svg')}}"/>&nbsp;<span>{{ commentedByList[loop.index-1] }}</span></div>
                 <div class="commentContent">
                     {{ comment.content | safe}}
                 </div>  
                 <div class="replyComment">
-                    <span><img class="likesImg"  src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> Reply<span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                    <span><img class="likesImg"  src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ commentedByList[loop.index-1] }}" >Reply</a><span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
                  </div>
 
             </div>
-              
+            {% if lengthReplies   %}
+                {% for commentId,replylist in repliesInfo.items() %}
+                    
+                     {% if commentId==comment.id %}
+
+                      {% if replylist %}  
+                         <div class="repliesContainer">
+                          <div class="sideLine"></div>
+
+                          <div class="replies">
+                          {% for reply in replylist %}
+
+                            <div class="comment"  data-post-id="{{ userPostInfo['postId'] }}" data-comment-id="{{ comment.id }}">
+                                <div class="userCommented"><img src="{{ url_for('static', filename='Images/User.svg')}}"/>&nbsp;<span>{{ reply.repliedBy }}</span></div>
+                                    <div class="commentContent">
+                                        <p>{{ reply.repliedTo }}</p>
+                                        {{ reply.content | safe}}
+                                    </div>  
+                                <div class="replyComment">
+                                    <span><img class="likesImg"  src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ reply.repliedBy }}" >Reply</a><span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                                </div>
         
+                            </div>
+
+
+                           {% endfor %}
+                        </div>
+                        </div>
+                      {% endif %}
+
+                    {% endif %}
+                         
+                {%endfor%}
                    
-             
+             {% endif %}
             {% endfor %}
          {% else %}
             <span>No comments</span>
          {% endif %}
         
       </div>
+      <div id="replyFormContainer" class="hide">
+        <form  action="/comment/reply/" method="POST"  onsubmit="return Reply()"> 
+            <div class="replyto"> <p>@Sai Kiran Patro</p></div>
+            <div id="replyEditor">
+               
+            </div>
+            
+            <input id="replyTo" type="hidden" value="" name="replyTo">
+            <input id='replyToPostId' type="hidden" value="" name="postId">
+            <input id="replyComment" type="hidden" value='' name="replyContent" />
+            <div class="replyButtonContainer">
+                <button id="replyCommentButton" onclick="Reply()" type="submit" >Reply</button>
+            </div>
+            
+        </form>
+        
+      </div>
+
+
+
     </div>
     <div class="errorPopUp">
       <div class="errorMessage" >The message</div>
@@ -162,6 +213,12 @@ else if(category=='True'){
        
     theme: 'bubble',
   });
+
+  const quillReply= new Quill('#replyEditor', {
+    placeholder: 'Reply...',
+       
+       theme: 'bubble',
+  })
 //   const quill = new Quill('#editor',{
 //     modules:{
 //         toolbar:true
@@ -175,7 +232,7 @@ else if(category=='True'){
 
     const commentContentElement=document.querySelector('#commentContent');
     const addCommentContent=document.querySelector('#editor').firstElementChild.innerHTML;
-    console.log(addCommentContent);
+   
     if(addCommentContent === '<p>Type your Query here.</p>'){
 
       alert('Please enter your query/content.')
@@ -186,7 +243,7 @@ else if(category=='True'){
         alert('Please add your comment...')
         return;
     }
-
+   
     commentContentElement.value=addCommentContent
     document.querySelector('#editCommentButton').setAttribute('class','visibleFlex')
     document.querySelector('#addCommentButton').setAttribute('class','visibleFlex')
@@ -204,6 +261,66 @@ else if(category=='True'){
     
 
   }
+
+  function Reply(){
+
+
+       const replyContentElement=document.querySelector('#replyComment');
+       const replyEditorContent=document.querySelector('#replyEditor').firstChild.innerHTML;
+       if(replyEditorContent==='<p><br></p>'){
+
+        alert('Add reply...');
+        return false;
+       }
+       else{
+
+        const replyEditorContent=document.querySelector('#replyEditor').firstElementChild.innerHTML;
+        console.log("reply content", replyEditorContent);
+        const replyingTo=document.querySelector('.replyto').firstElementChild.textContent;
+        console.log(replyingTo); 
+        document.querySelector('#replyTo').value=replyingTo; 
+        document.querySelector('#replyComment').value=replyEditorContent; 
+        return true;
+    }
+       
+       replyContentElement.value=replyEditorContent
+
+  }
+
+  function activateReply(){
+
+    document.querySelectorAll('.replyToComment').forEach((replyButton)=>{
+
+        replyButton.addEventListener('click',function(){
+
+           
+
+  
+            //Enabling reply container
+            const replyFormContainer=document.querySelector("#replyFormContainer")
+            replyFormContainer.setAttribute('class','visibleBlock')
+            const commentId=replyButton.getAttribute('data-comment-id')
+            replyFormContainer.firstElementChild.setAttribute('action',`/comment/reply/${commentId}`)
+            document.querySelector(".replyto").firstElementChild.textContent='@'+replyButton.getAttribute('data-reply-to')
+            document.querySelector("#replyToPostId").value=replyButton.getAttribute('data-post-id')
+
+             //scroll to that reply action 
+            replyFormContainer.scrollIntoView({ behavior: "smooth" })
+        })
+
+    })
+  }
+  activateReply()
+
+
+/// set side line height for replies
+
+document.querySelectorAll('.repliesContainer').forEach((replyContainer)=>{
+ 
+   const repliesHeight=Math.round(replyContainer.querySelector('.replies').offsetHeight)+'px'
+   replyContainer.querySelector('.sideLine').style.height=repliesHeight
+
+})
 
 // Read More Functionality for Comments
 const readMoreComment = () =>{
