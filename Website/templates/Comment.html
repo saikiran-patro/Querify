@@ -7,14 +7,11 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='Css/styles.css')}}" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.bubble.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.js"></script>
-
-
-
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.bubble.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.js"></script>
 
     <title>Querify</title>
 </head>
@@ -104,8 +101,25 @@
                     {{ comment.content | safe}}
                 </div>  
                 <div class="replyComment">
-                    <span><img class="likesImg"  src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ commentedByList[loop.index-1] }}" >Reply</a><span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
-                 </div>
+                    {% if current_user.is_authenticated %}
+
+                    <span>
+                      {% if commentLikedList[loop.index-1 ]%}   
+                       <img class="commentsLikesImg hide" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> 
+                       <img class="commentsDisLikesImg" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+                      {% else %}
+                       <img class="commentsLikesImg" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> 
+                       <img class="commentsDisLikesImg hide" data-user-id="{{ current_user.id }}" data-comment-id="{{ comment.id }}"src="{{ url_for('static', filename='Images/heartRed.svg')}}"/>
+                      {% endif %} 
+                    <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ commentedByList[loop.index-1] }}" >Reply</a>
+                    <span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                    
+                    
+                    {% endif %} 
+                </div>
+                <div class="replyCommentLike">
+                    {{ commentsLikedCount[comment.id] }} Likes
+                </div>
 
             </div>
             {% if lengthReplies   %}
@@ -127,8 +141,12 @@
                                         {{ reply.content | safe}}
                                     </div>  
                                 <div class="replyComment">
-                                    <span><img class="likesImg"  src="{{ url_for('static', filename='Images/heartWhite.svg')}}"/> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ reply.repliedBy }}" >Reply</a><span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                                    {% if current_user.is_authenticated %}
+                                    <span> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ reply.repliedBy }}" >Reply</a><span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                                    {% endif %}
                                 </div>
+                                
+                
         
                             </div>
 
@@ -478,6 +496,70 @@ socket.on('dislike_count_updated', function(data) {
   // Update the count only if it matches the expected post ID (implement logic here)
   if (img.dataset.postId==postId) {
      img.parentElement.parentElement.parentElement.querySelector('.postLikeCount').innerText = count + ' likes';
+  }
+})});
+
+
+
+
+
+/* Real Time Like Count Update of Comment */
+
+var socket2 = io();
+
+
+// Like the post 
+document.querySelectorAll('.commentsLikesImg').forEach((img)=>{
+
+  img.addEventListener('click',()=>{
+   
+    const userId = img.dataset.userId;   // Access data-user-id using dataset property
+    const commentId = img.dataset.commentId; // Access data-comment-id using dataset property
+    socket2.emit('like_update_comment_count', { user_id:  userId, comment_id:commentId });
+    img.classList.remove('visibleInline')
+    img.classList.add('hide')
+    img.parentElement.querySelector('.commentsDisLikesImg').classList.add('visibleInline')
+  })
+})
+
+
+socket2.on('like_update_comment_count', function(data) {
+    const commentId = data.comment_id;
+    const count = data.count;
+    document.querySelectorAll('.commentsLikesImg').forEach((img)=>{
+
+
+    // Update the count only if it matches the expected post ID (implement logic here)
+    if (img.dataset.commentId==commentId) {
+       img.parentElement.parentElement.parentElement.querySelector('.replyCommentLike').innerText = count + ' likes';
+    }
+})});
+
+//Dislike the post 
+document.querySelectorAll('.commentsDisLikesImg').forEach((img)=>{
+
+img.addEventListener('click',()=>{
+
+  const userId = img.dataset.userId;   // Access data-user-id using dataset property
+  const commentId = img.dataset.commentId; // Access data-comment-id using dataset property
+  socket2.emit('dislike_update_comment_count', { user_id:  userId, comment_id:commentId });
+  img.classList.remove('visibleInline')
+  img.classList.add('hide')
+  img.parentElement.querySelector('.commentsLikesImg').classList.add('visibleInline')
+
+})
+})
+
+
+socket2.on('dislike_update_comment_count', function(data) {
+  const commentId = data.comment_id;;
+  const count = data.count;
+  document.querySelectorAll('.commentsDisLikesImg').forEach((img)=>{
+
+
+  // Update the count only if it matches the expected post ID (implement logic here)
+  if (img.dataset.commentId===commentId) {
+     img.parentElement.parentElement.parentElement.querySelector('.replyCommentLike').innerText = count + ' likes';
   }
 })});
 

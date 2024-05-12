@@ -55,6 +55,11 @@ class Reply(db.Model):
     repliedBy=db.Column(db.Text)
     repliedTo=db.Column(db.Text)
     postId=db.Column(db.Integer)
+
+class CommentsLike(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    commentId=db.Column(db.Integer, db.ForeignKey('comments.id'))
+    userId=db.Column(db.Integer)
     
     
 

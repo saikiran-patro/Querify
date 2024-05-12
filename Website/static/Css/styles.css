@@ -84,6 +84,16 @@ body{
     padding: 3px 20px;
     cursor: pointer;
 }
+
+.commentsLikesImg,.commentsDisLikesImg{
+    cursor:pointer;
+}
+
+.replyCommentLike{
+
+    padding-left: 7px;
+}
+/* Replies Section */
 .replyToComment{
 
 

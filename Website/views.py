@@ -1,6 +1,6 @@
 from flask import Blueprint,render_template,request,redirect,url_for
 from flask_login import login_required,current_user
-from .models import Post,Likes,Comments,Reply
+from .models import Post,Likes,Comments,Reply,CommentsLike
 from .import db
 import datetime
 from pytz import timezone
@@ -18,7 +18,6 @@ def get_likes_count():
 
 def likes_count_by_id(postId):
     likeCount=Likes.query.filter_by(postId=postId).count()
-    
     return likeCount
 def update_count_by_id(postId):
     new_like_rec=Likes(postId=postId)
@@ -55,7 +54,23 @@ def get_user_info(fetchRequest):
 
 def get_comments_by_post_id(postId):
     commentsInfo=Comments.query.filter_by(postId=postId).all()
-    return commentsInfo
+    userId=get_user_id()
+    commentLikedList=[]
+    commentsLikedCount=dict()
+    for comment in commentsInfo:
+        commentLiked = CommentsLike.query.filter_by(commentId=comment.id, userId=userId).count()
+        if commentLiked:
+            commentLikedList.append(1)
+        else:
+            commentLikedList.append(0)
+        commentLikeCount=CommentsLike.query.filter_by(commentId=comment.id).count()
+        commentsLikedCount[comment.id]=commentLikeCount
+
+
+    return [commentsInfo,commentLikedList,commentsLikedCount]
+
+
+
 def get_replies_to_comments_by_post_id(postId):
     repliesInfo=dict()
     commentsList=Comments.query.filter_by(postId=postId).all()
@@ -75,6 +90,38 @@ def getCommentedByList(postId):
         user=User.query.filter_by(id=comment.userId).first()
         commentedBy.append(user.firstName+" "+user.lastName)
     return commentedBy
+
+'''
+ Realtime Like and Dislike Count of Comments!
+
+'''
+def like_count_of_comment_by_id(userId,commentId):
+    commentLikeCount=CommentsLike.query.filter_by(commentId=commentId).count()
+    print("commentLikes",commentLikeCount)
+    return commentLikeCount
+def update_comment_count_by_id(userId,commentId):
+    new_record=CommentsLike(commentId=commentId,userId=userId)
+    db.session.add(new_record)
+    db.session.commit()
+
+def delete_comment_count_by_id(userId,commentId):
+    record = CommentsLike.query.filter_by(commentId=commentId,userId=userId).first()
+    print("In delete section func")
+    if record:
+        # Only delete if the record exists and belongs to the current user
+        db.session.delete(record)
+        print('removed the count')
+        db.session.commit()
+        return True  # Indicate successful deletion (optional)
+    else:
+        return False  #
+
+    
+
+
+
+
+
 
 @views.route('/', methods=['GET', 'POST'])
 @login_required
@@ -132,7 +179,7 @@ def comment(post_id):
     #delete_all_comments()
     userPostInfo,postDetails=get_user_info(post_id)
     userPostInfo[0]['postLikes']=likes_count_by_id(post_id)
-    commentsInfo=get_comments_by_post_id(post_id)
+    commentsInfo,commentLikedList,commentsLikedCount=get_comments_by_post_id(post_id)
     repliesInfo=get_replies_to_comments_by_post_id(post_id)
     userCommentedByList=getCommentedByList(post_id)
     if request.method == 'POST':
@@ -149,16 +196,16 @@ def comment(post_id):
         db.session.add(new_comment)
         db.session.commit()
         # delete_all_comments()
-        commentsInfo=get_comments_by_post_id(postId)
+        commentsInfo,commentLikedList,commentsLikedCount=get_comments_by_post_id(postId)
         userCommentedByList=getCommentedByList(postId)
-        return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList),repliesInfo=repliesInfo,lengthReplies=len(repliesInfo))
+        return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList),commentLikedList=commentLikedList[::-1],commentsLikedCount=commentsLikedCount,repliesInfo=repliesInfo,lengthReplies=len(repliesInfo))
 
     
-    return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList),repliesInfo=repliesInfo,lengthReplies=len(repliesInfo))
+    return render_template('Comment.html',userPostInfo=userPostInfo[0],postDetails=postDetails.first(),commentsList=commentsInfo[::-1],commentedByList=userCommentedByList[::-1],lengthComments=len(userCommentedByList),commentLikedList=commentLikedList[::-1],commentsLikedCount=commentsLikedCount,repliesInfo=repliesInfo,lengthReplies=len(repliesInfo))
 
 
 
-@views.route('/comment/reply/<int:comment_id>', methods=['POST','GET'])
+@views.route('/comment/reply/<int:comment_id>', methods=['POST'])
 @login_required
 
 def reply(comment_id):
@@ -180,5 +227,5 @@ def reply(comment_id):
         db.session.add(new_reply)
         db.session.commit()
         return redirect(url_for('views.comment',post_id=postId))
-    delete_all_replies()
+    #delete_all_replies()
     return 'Replying to {}'.format(comment_id)
