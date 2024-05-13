@@ -118,6 +118,31 @@ def delete_comment_count_by_id(userId,commentId):
 
     
 
+''' Profile Section Infor Functions'''
+def get_user_details(userId):
+
+    user=User.query.filter_by(id=userId).first()
+
+    userDetails=dict()
+    userDetails['userId']=userId
+    userDetails['firstName']=user.firstName
+    userDetails['lastName']=user.lastName
+    userDetails['emailAddress']=user.emailAddress
+    userDetails['posts']=[]
+    
+    posts=Post.query.filter_by(userId=userId).all()
+    for post in posts:
+        postDetails={}
+        postDetails['postId']=post.id
+        postDetails['postTitle']=post.title
+        postDetails['postContent']=post.content
+        userDetails['posts'].append(postDetails)
+    
+   
+    return userDetails
+
+
+
 
 
 
@@ -135,7 +160,9 @@ def home():
         serverCategory=request.args.get('category')
     
         return render_template('Home.html',message=serverMessage, category=serverCategory)
-
+'''
+Deletes all functionality (Temp)
+'''
 def delete_all_posts():
     # Delete all posts using query.delete()
     db.session.query(Post).delete()
@@ -152,6 +179,7 @@ def delete_all_replies():
     db.session.query(Reply).delete()
     db.session.commit()
     print("All replies deleted successfully!")
+'''Delete all ends here '''
 @views.route('/post', methods=['POST','GET'])
 @login_required
 def post():
@@ -229,3 +257,25 @@ def reply(comment_id):
         return redirect(url_for('views.comment',post_id=postId))
     #delete_all_replies()
     return 'Replying to {}'.format(comment_id)
+
+
+@views.route('/profile', methods=['GET', 'POST'])
+@login_required
+def Profile():
+
+    userId=get_user_id()
+    userDetails=get_user_details(userId)
+    if request.method=='POST':
+        data=request.form
+        firstName=data.get('firstName')
+        lastName=data.get('lastName')
+        user=User.query.get(userId)
+        if user:
+            user.firstName=firstName
+            user.lastName=lastName
+            db.session.commit()
+        userDetails=get_user_details(userId)
+        return render_template('Profile.html',userDetails=userDetails, userPosts=userDetails['posts'] , postsCount=len(userDetails['posts']))
+        
+   
+    return render_template('Profile.html',userDetails=userDetails, userPosts=userDetails['posts'] , postsCount=len(userDetails['posts']))

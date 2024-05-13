@@ -9,7 +9,10 @@ body{
 
     margin: 0px;
 }
-
+#userName{
+    color: var(--fontColor) !important;
+    text-decoration: none !important;
+}
 .postContent p{
 
     margin-bottom: 1px !important;
@@ -36,6 +39,32 @@ body{
 }
 .visibleBlock{
     display: block !important;
+}
+.showComments{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.showComments a{
+    background: black;
+   
+    padding: 5px 10px;
+    border-radius: 8px;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+/* Show Password  */
+.form-group{
+  position: relative;
+}
+.form-group img{
+
+    width: 24px;
+    position: absolute;
+    top: 60%;
+    right: 10px;
+    cursor: pointer;
 }
 
 /* Comment Section  */
@@ -544,4 +573,123 @@ h2{
 .ql-picker-options{
 
     background-color: black !important;
+}
+
+
+/* Profile Container Styling */
+
+.profileContainer{
+    height: 100vh;
+}
+.profileDetailsContainer{
+
+    background: black;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px;
+}
+.profilePic{
+
+    display: flex;
+    width: 50%;
+    justify-content: center;
+    align-items: center;
+}
+.profilePic img{
+    width: 100%;
+    max-width: 150px;
+}
+.profileDetails{
+
+    width: 50%;
+    display: flex;
+    align-items: center;    
+    flex-direction: column;
+    color:var(--fontColor);
+    
+}
+.saveProfile{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.saveProfile button{
+
+    position: absolute;
+    bottom: 10px ;
+    right: 10px;
+}
+.profileDetails form{
+    width: 100%;
+}
+.profileDetailContainer{
+    width: 100%;
+    display: flex;
+   
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.profileDetailContainer input{
+    background: black;
+    border: none;
+    border-bottom: 2px solid white;
+    color: white;
+    outline: none;
+
+}
+.profileEditButton{
+    cursor: pointer;
+}
+#profileEmailId{
+    cursor:not-allowed;
+}
+
+.profilePosts{
+    display: flex;
+    flex-wrap: wrap;
+    margin: 20px;
+    gap: 30px;
+}
+.postCard{
+    max-width: 200px;
+   
+    width: 100%;
+    padding: 20px;
+    background: #e5ecf4;
+    border-radius: 15px;
+}
+.postCard img{
+    width: 100%;
+}
+.profilePostTitle{
+    font-size: 18px;
+    font-weight: bold;
+}
+.profilePostContent{
+    height: 40px;
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+.postCard a{
+    background: black;
+    margin: 0px auto;
+    
+    padding: 5px 10px;
+    border-radius: 8px;
+    color: white !important;
+    text-decoration: none !important;
+}
+.noPosts{
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   width: 100%;
+   max-width: 500px;
+   flex-direction: column;
+   margin: 0px auto;
 }
