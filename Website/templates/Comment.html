@@ -94,7 +94,7 @@
         <h2>Comments</h2>
          {% if lengthComments %}
             {% for comment in commentsList %}
-
+            
             <div class="comment"  data-post-id="{{ userPostInfo['postId'] }}" data-comment-id="{{ comment.id }}">
                 <div class="userCommented"><img src="{{ url_for('static', filename='Images/User.svg')}}"/>&nbsp;<span>{{ commentedByList[loop.index-1] }}</span></div>
                 <div class="commentContent">
@@ -118,7 +118,17 @@
                     {% endif %} 
                 </div>
                 <div class="replyCommentLike">
-                    {{ commentsLikedCount[comment.id] }} Likes
+                    <span>{{ commentsLikedCount[comment.id] }} Likes</span>
+
+                    {% if comment.userId == current_user.id %}
+                    <form method="post" action="/delete/comment">
+                        <input type="hidden" name="commentId" value="{{ comment.id }}">
+                        <input type="hidden" name="postId" value="{{ userPostInfo['postId'] }}">
+                        <button class="postDeleteButton" type="submit"><img src="{{ url_for('static', filename='Images/DiscardRed.svg') }}" ></button>
+                    </form>
+                    {% endif %}
+                
+                
                 </div>
 
             </div>
@@ -143,6 +153,13 @@
                                 <div class="replyComment">
                                     {% if current_user.is_authenticated %}
                                     <span> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ reply.repliedBy }}" >Reply</a><span class="commentDate"> Posted on {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                                         {% if current_user.id == reply.userId %}
+                                         <form method="post" action="/delete/reply">
+                                            <input type="hidden" name="replyId" value="{{ reply.id }}">
+                                            <input type="hidden" name="postId" value="{{ userPostInfo['postId'] }}">
+                                            <button class="postDeleteButton" type="submit"><img src="{{ url_for('static', filename='Images/DiscardRed.svg') }}" ></button>
+                                        </form>
+                                          {% endif %}   
                                     {% endif %}
                                 </div>
                                 

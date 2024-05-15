@@ -251,13 +251,47 @@ def reply(comment_id):
         # Convert UTC time to user's region time zone
         user_tz = timezone('Asia/Kolkata')
         date = now_utc.astimezone(user_tz)
-        new_reply=Reply(commentId=commentId,content=replyContent,date=date,repliedBy=userName,repliedTo=repliedTo,postId=postId)
+        new_reply=Reply(commentId=commentId,content=replyContent,date=date,repliedBy=userName,repliedTo=repliedTo,postId=postId,userId=userId)
         db.session.add(new_reply)
         db.session.commit()
         return redirect(url_for('views.comment',post_id=postId))
     #delete_all_replies()
     return 'Replying to {}'.format(comment_id)
+@views.route('/delete/comment', methods=['POST'])
+@login_required
+def deleteComment():
 
+    if request.method == 'POST':
+        data=request.form
+        commentId=data.get('commentId')
+        postId=data.get('postId')
+        commentRec=Comments.query.get(commentId)
+        if not commentRec:
+            return "Comment not found.", 404
+        db.session.delete(commentRec)
+        db.session.commit()
+        return redirect("/comment/{}".format(postId))
+
+    else:
+        return '404 Error', 404
+
+@views.route('/delete/reply', methods=['POST'])
+@login_required
+def deleteReply():
+
+    if request.method == 'POST':
+        data=request.form
+        replyId=data.get('replyId')
+        postId=data.get('postId')
+        replyRec=Reply.query.get(replyId)
+        if not replyRec:
+            return "Comment not found.", 404
+        db.session.delete(replyRec)
+        db.session.commit()
+        return redirect("/comment/{}".format(postId))
+
+    else:
+        return '404 Error', 404
 
 @views.route('/profile', methods=['GET', 'POST'])
 @login_required
@@ -279,3 +313,17 @@ def Profile():
         
    
     return render_template('Profile.html',userDetails=userDetails, userPosts=userDetails['posts'] , postsCount=len(userDetails['posts']))
+
+@views.route('/delete', methods=['POST'])
+@login_required
+def delete():
+    
+    data=request.form
+    postId=data.get('postId')
+    postRec=Post.query.get(postId)
+    if not postRec:
+        return "Post not found.", 404
+    db.session.delete(postRec)
+    db.session.commit()
+    
+    return redirect('/profile')

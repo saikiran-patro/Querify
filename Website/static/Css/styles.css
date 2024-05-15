@@ -121,6 +121,9 @@ body{
 .replyCommentLike{
 
     padding-left: 7px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 /* Replies Section */
 .replyToComment{
@@ -692,4 +695,42 @@ h2{
    max-width: 500px;
    flex-direction: column;
    margin: 0px auto;
+}
+.profilePostActions{
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.postDeleteButton{
+
+    border: none;
+    background: #bb4242;
+    border: 2px solid red;
+    padding: 2px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.postDeleteButton img{
+    width: 16px;
+}
+
+.deleteConfirmationContainer{
+    background: white;
+    position: absolute;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 10px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.deleteForm form{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
