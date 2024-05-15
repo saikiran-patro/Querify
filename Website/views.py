@@ -8,8 +8,8 @@ from .models import User,get_user_id
 views=Blueprint('views',__name__)
 from sqlalchemy import func
 
-def get_likes_count():
-    all_posts=Post.query.all()
+def get_likes_count(all_posts):
+    
     likesCount=[]
     for post in all_posts:
         likeCount=Likes.query.filter_by(postId=post.id).count()
@@ -39,7 +39,7 @@ def get_user_info(fetchRequest):
 
     all_posts=Post.query.all() if fetchRequest=='all' else Post.query.filter_by(id=fetchRequest)
     userPostInfo=[]
-    likesCount=get_likes_count()
+    likesCount=get_likes_count(all_posts)
     index=0
     for post in all_posts:
        
@@ -327,3 +327,35 @@ def delete():
     db.session.commit()
     
     return redirect('/profile')
+
+@views.route('/search', methods=['POST'])
+@login_required
+def search():
+    if request.method == 'POST':
+        data=request.form
+        searchQuery=data.get('search')
+        
+        userPostInfo,all_posts =get_user_info('all')
+        filtered_posts=[]
+        filteredPostInfo=[]
+
+        for post in all_posts:
+            if searchQuery.lower() in post.title.lower() or searchQuery in post.content.lower():
+                filtered_posts.append(post)
+            index=0
+        likesCount=get_likes_count(filtered_posts)
+
+        
+        for post in filtered_posts:
+       
+            user=User.query.filter_by(id=post.userId).first()
+            user_id = get_user_id()  
+            record = Likes.query.filter_by(postId=post.id, userId=user_id).first()
+            record = True if record else False
+            userObject={'userFullName':user.firstName+" "+user.lastName,'postedDate':"-".join(str(post.date)[0:10].split('-')[::-1]),'postLikes':likesCount[index],'postId':post.id,'postLiked':record}
+            filteredPostInfo.append(userObject)
+            index+=1
+            
+        return render_template('Home.html', all_posts=filtered_posts,users=filteredPostInfo, postCategory=True)
+    else:
+        return '404 Not Found',404

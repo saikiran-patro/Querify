@@ -608,7 +608,7 @@ h2{
 
     width: 50%;
     display: flex;
-    align-items: center;    
+    
     flex-direction: column;
     color:var(--fontColor);
     
@@ -651,7 +651,14 @@ h2{
 #profileEmailId{
     cursor:not-allowed;
 }
+#postCounts{
 
+    background: white;
+    width: fit-content;
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+}
 .profilePosts{
     display: flex;
     flex-wrap: wrap;
@@ -728,6 +735,9 @@ h2{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    -webkit-box-shadow: 10px 6px 37px -24px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 6px 37px -24px rgba(0,0,0,0.75);
+    box-shadow: 10px 6px 37px -24px rgba(0,0,0,0.75);
 }
 .deleteForm form{
     display: flex;
