@@ -125,6 +125,5 @@ def signup():
             db.session.commit()
             login_user(new_user,remember=True)
             return redirect(url_for('views.home',message="Account created successfully!", category=True,current_user=current_user))
-          #return render_template('Signup.html', message="Account created successfully!", category=True )
        
-    return render_template('Signup.html', text="testing")
+    return render_template('Signup.html')
