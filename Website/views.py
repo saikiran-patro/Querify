@@ -232,7 +232,8 @@ def reply(comment_id):
         userName=get_user_name_by_user_id(userId).lower()
         perth_tz = timezone('Australia/Perth')
         # Get the current time in UTC
-        utc_now = datetime.now(timezone('UTC'))
+        utc_now = datetime.datetime.utcnow()
+
         # Convert UTC time to user's region time zone
         user_tz = perth_tz
         now_user_region = utc_now.astimezone(user_tz)
