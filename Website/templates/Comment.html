@@ -77,7 +77,7 @@
             {% endif %}
             <img class="commentImg" alt="CommentPost" data-post-id="{{ userPostInfo['postId'] }}" src="{{ url_for('static', filename='Images/Comment.svg')}}"/>
           </div>
-          <span class="postedDate">Posted {{ userPostInfo['postedDate'] }}</span>
+          <span class="postedDate">Posted on {{ userPostInfo['postedDate'] | time_ago }}</span>
           
         </div>
         <p class="postLikeCount" style="margin-left: 37px;">{{ userPostInfo['postLikes'] }} likes</p>
@@ -159,7 +159,7 @@
                                     </div>  
                                 <div class="replyComment">
                                     {% if current_user.is_authenticated %}
-                                    <span> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ reply.repliedBy }}" >Reply</a><span class="commentDate"> Posted {{comment.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
+                                    <span> <a class="replyToComment"  data-post-id="{{ userPostInfo['postId'] }}"  data-comment-id="{{ comment.id }}" data-reply-to="{{ reply.repliedBy }}" >Reply</a><span class="commentDate"> Posted {{reply.date | time_ago}}</span></span><span class="read-more-comment">Read More</span>
                                          {% if current_user.id == reply.userId %}
                                          <form method="post" action="/delete/reply">
                                             <input type="hidden" name="replyId" value="{{ reply.id }}">

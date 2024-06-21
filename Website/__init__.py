@@ -4,6 +4,9 @@ from flask_login import LoginManager
 from flask_socketio import SocketIO
 from flask_humanize import Humanize
 
+
+from GenAI import model 
+
 # Initialize the extension
 humanize = Humanize()
 
@@ -84,7 +87,19 @@ def create_app():
         else:
             socketio.emit('dislike_update_comment_count', {'comment_id': comment_id, 'count': 0})
 
+    @socketio.on('dial_prompt')
+    def dialog_prompt(data):
+        prompt=data.get('query')
+        print("This is the user requested prompt",prompt)
+        try:
 
+            response = model.generate_content(prompt)
+            socketio.emit('response_prompt', {'response':response.text})
+            print(response.text)
+        except:
+            
+            socketio.emit('response_prompt', {'response': 'Error generating response'})
+        
 
     return app
     

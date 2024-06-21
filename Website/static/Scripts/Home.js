@@ -1,3 +1,24 @@
+function generateRandomString(length) {
+  // Define the character set for the random string
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+  // Initialize an empty string to store the random characters
+  let result = "";
+
+  // Loop for the desired length of the random string
+  for (let i = 0; i < length; i++) {
+    // Generate a random index within the character set
+    const randomIndex = Math.floor(Math.random() * characters.length);
+
+    // Extract the character at the random index and append it to the result string
+    result += characters[randomIndex];
+  }
+
+  return result;
+}
+
+// Example usage: Generate a random string of 10 characters
+
 /*---------------------Real-time like count update--------------------*/
 var socket = io();
 
@@ -64,7 +85,8 @@ const commentImages = document.querySelectorAll('.commentImg');  // Select all i
 commentImages.forEach(image => {
     image.addEventListener('click', function() {
         const postId =image.dataset.postId  // Extract postId from image ID
-        window.location.href = `/comment/${postId}`;  // Redirect with postId
+
+        window.location.href = `/comment/${postId+generateRandomString(5)}`;  // Redirect with postId
     });
 });
 

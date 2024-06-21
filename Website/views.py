@@ -68,7 +68,7 @@ def get_user_info(fetchRequest):
         user_id = get_user_id()  
         record = Likes.query.filter_by(postId=post.id, userId=user_id).first()
         record = True if record else False
-        userObject={'userFullName':user.firstName+" "+user.lastName,'postedDate':"-".join(str(post.date)[0:10].split('-')[::-1]),'postLikes':likesCount[index],'postId':post.id,'postLiked':record}
+        userObject={'userFullName':user.firstName+" "+user.lastName,'postedDate':post.date,'postLikes':likesCount[index],'postId':post.id,'postLiked':record}
         userPostInfo.append(userObject)
         index+=1
     return [userPostInfo,all_posts]
@@ -170,15 +170,16 @@ def post():
         data=request.form
         title=data.get('title')
         editorContent=data.get('editor')
-        perth_tz = pytz.timezone('Australia/Perth')
+        #perth_tz = pytz.timezone('Australia/Perth')
 
         # Get the current time in UTC
         utc_now = datetime.utcnow().replace(tzinfo=pytz.utc)
 
 
-        # Convert UTC time to user's region time zone
-        user_tz = perth_tz
-        now_user_region = utc_now.astimezone(perth_tz)
+        # Storing in UTC time zone format
+        
+    
+        now_user_region = utc_now
         new_post=Post(userId=current_user.id, title=title,content=editorContent,date=now_user_region)
         db.session.add(new_post)
         db.session.commit()        
@@ -186,29 +187,40 @@ def post():
     return render_template('Post.html')
 
 #Comment Route for a specific post
-@views.route('/comment/<int:post_id>', methods=['POST','GET'])
+@views.route('/comment/<string:post_id>', methods=['POST','GET'])
 @login_required
 def comment(post_id):
-    userPostInfo,postDetails=get_user_info(post_id)
-    userPostInfo[0]['postLikes']=likes_count_by_id(post_id)
-    commentsInfo,commentLikedList,commentsLikedCount=get_comments_by_post_id(post_id)
-    repliesInfo=get_replies_to_comments_by_post_id(post_id)
-    userCommentedByList=getCommentedByList(post_id)
+
+    #decrypt
+    post_id_new=''
+    for i in post_id:
+        if i.isdigit():
+            post_id_new+=i
+        else:
+            break
+
+    post_id=post_id_new
+    try:
+
+        userPostInfo,postDetails=get_user_info(post_id)
+        userPostInfo[0]['postLikes']=likes_count_by_id(post_id)
+        commentsInfo,commentLikedList,commentsLikedCount=get_comments_by_post_id(post_id)
+        repliesInfo=get_replies_to_comments_by_post_id(post_id)
+        userCommentedByList=getCommentedByList(post_id)
+    except:
+        print("error")
+        return "Post not found.", 404
     if request.method == 'POST':
         data=request.form
         postId=userPostInfo[0]['postId']
         userId=get_user_id()
         userName=get_user_name_by_user_id(userId).lower()
         commentContent=data.get('comment')
-        perth_tz = pytz.timezone('Australia/Perth')
-
         # Get the current time in UTC
         utc_now = datetime.utcnow().replace(tzinfo=pytz.utc)
 
 
-        # Convert UTC time to user's region time zone
-        user_tz = perth_tz
-        now_user_region = utc_now.astimezone(perth_tz)
+        now_user_region = utc_now
         new_comment=Comments(userId=userId,postId=postId,content=commentContent,date=now_user_region)
         db.session.add(new_comment)
         db.session.commit()
@@ -234,15 +246,13 @@ def reply(comment_id):
         replyContent=data.get('replyContent')
         userId=get_user_id()
         userName=get_user_name_by_user_id(userId).lower()
-        perth_tz = pytz.timezone('Australia/Perth')
-
-        # Get the current time in UTC
+    
         utc_now = datetime.utcnow().replace(tzinfo=pytz.utc)
 
 
         # Convert UTC time to user's region time zone
-        user_tz = perth_tz
-        now_user_region = utc_now.astimezone(perth_tz)
+        
+        now_user_region = utc_now
         new_reply=Reply(commentId=commentId,content=replyContent,date=now_user_region,repliedBy=userName,repliedTo=repliedTo,postId=postId,userId=userId)
         db.session.add(new_reply)
         db.session.commit()

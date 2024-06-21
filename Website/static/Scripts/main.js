@@ -17,5 +17,108 @@ document.querySelector(".closeLogo").addEventListener("click", () => {
   popUp.style.display = "none";
 });
 
+// Gen AI logic
+
+//Gen AI launch window
+const genAiWindow= document.querySelector('.genAiContainerBox')
+document.querySelector('.aiButton').addEventListener("click", () => {
+ genAiWindow.style.display="flex";
+ adjustChatContainerHeight() 
+
+})
+
+//Gen AI Close window
+document.querySelector('.aiBackButton').addEventListener("click",()=>{
+  genAiWindow.style.display="none"
+})
+
+// socket connection logic
+var socket=io();
+
+
+//chatContainer
+const chatContainer= document.querySelector('.aiChatContainer');
+
+
+// on user prompt
+const promptSearchButton=document.querySelector("#promptSearch");
+promptSearchButton.addEventListener("click", () => {
+  
+  const prompt=document.querySelector("#promptBox").value;
+  socket.emit("dial_prompt",{query:prompt});
+  // promptSearchButton.style.cursor="not-allowed";
+  //Appending Prompt
+  const promptContainer=document.createElement('div');
+  promptContainer.innerHTML=`<div class="userPrompt">${prompt}</div>`
+  promptContainer.setAttribute("class","userPromptContainer");
+  chatContainer.appendChild(promptContainer);
+  //Appending Shimmer UI
+  const responseContainer=document.createElement("div");
+  responseContainer.innerHTML=`<div class="aiResponse">
+  <div class="w-full max-w-md p-6 bg-gray-990 rounded-lg shadow-md">
+    <div class="mb-4">
+      <div class="mt-4 space-y-2">
+        <div class="w-full h-4 bg-gray-600 rounded animate-shimmer shimmer-bg"></div>
+        <div class="w-full h-4 bg-gray-600 rounded animate-shimmer shimmer-bg"></div>
+        <div class="w-5/6 h-4 bg-gray-600 rounded animate-shimmer shimmer-bg"></div>
+      </div>
+    </div>
+  </div></div>`
+  responseContainer.setAttribute("class", "aiResponseContainer")
+  chatContainer.appendChild(responseContainer);
+  scrollToBottom()
+  
+
+})
+socket.on('response_prompt', function(data) {
+  if (data && data.response) {
+    const response = data.response;
+    console.log('response is emitted');
+    console.log(response);
+    const remarkableObject = window.remarkable;
+    
+    // Create a new instance of remarkable
+    let md = new remarkableObject.Remarkable();
+    const mdText=md.render(response)
+    setTimeout(function(){
+
+      const aiResponseContainers=document.querySelectorAll('.aiResponseContainer')
+      console.log(aiResponseContainers)
+      const aiResponseContainer = aiResponseContainers[aiResponseContainers.length-1];
+      aiResponseContainer.innerHTML = `<div class="aiResponse">${mdText}</div>`
+    },1000)
+    
+  } else {
+    console.error('No response received or data is undefined');
+  }
+});
+function scrollToBottom() {
+  const aiChatContainer = document.querySelector('.aiChatContainer');
+  aiChatContainer.scrollTo({
+    top: aiChatContainer.scrollHeight,
+    behavior: 'smooth'
+  });
+}
+function adjustChatContainerHeight() {
+  const genAiContainer = document.querySelector('.genAiContainer');
+      const gradientText = document.querySelector('.gradient-text');
+      const subtext = document.querySelector('.subtext');
+      const prompt = document.querySelector('.prompt');
+      const aiChatContainer = document.querySelector('.aiChatContainer');
+
+      const totalHeight = genAiContainer.getBoundingClientRect().height;
+      const gradientTextHeight = gradientText.getBoundingClientRect().height;
+      const subtextHeight = subtext.getBoundingClientRect().height;
+      const promptHeight = prompt.getBoundingClientRect().height;
+
+ // console.log(totalHeight, gradientTextHeight, subtextHeight, promptHeight);
+      const aiChatContainerHeight = totalHeight - (gradientTextHeight + subtextHeight + promptHeight+100);
+
+      aiChatContainer.style.height = `${aiChatContainerHeight}px`;
+      aiChatContainer.style.overflowY = 'scroll';
+}
+
+window.addEventListener('resize', adjustChatContainerHeight);
+window.addEventListener('load', adjustChatContainerHeight);
 // // Setting the Alt Text for Posted Images
 
