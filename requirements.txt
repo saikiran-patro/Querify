@@ -8,3 +8,4 @@ tzlocal
 google-generativeai
 flask_humanize
 IPython
+gunicorn==19.7.1
