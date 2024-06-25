@@ -249,10 +249,19 @@ margin:2px;
 
 
 /* Navigation Container */
-.leftHeader{
+.leftHeader a{
     display: flex;
     justify-self: center;
     align-items: center;
+    text-decoration: none;
+    color: white !important;
+}
+.leftHeader a:hover{
+    display: flex;
+    justify-self: center;
+    align-items: center;
+    text-decoration: none;
+    color: white !important;
 }
 .postButton{
     background:#f2f4f5;
@@ -537,11 +546,11 @@ h2{
 .read-more{
     outline: none;
     border: none;
-    padding: 5px 10px;
+    padding: 3px 10px;
     border-radius: 8px;
-    background: #3a3a3a;
-    color:white;
+    color: #3a3a3a;
     cursor: pointer;
+    font-style: italic;
 }
 /* Create a post section */
 
@@ -822,7 +831,7 @@ h2{
     border: none;
     background: #bb4242;
     border: 2px solid red;
-    padding: 2px 16px;
+    padding: 7px 16px;
     border-radius: 8px;
     cursor: pointer;
 }
@@ -992,7 +1001,7 @@ h2{
   }
 
   .aiResponse code{
-    color:green !important;
+    color:#B3E2A7 !important;
   }
   /* Response Shimmer UI */
   @layer utilities {
@@ -1037,7 +1046,7 @@ h2{
 
 }
 
-@media (max-width:750px)
+@media (max-width:850px)
 {
   body{
 
@@ -1089,7 +1098,22 @@ h2{
   .profilePosts{
     justify-content: center;
   }
+  /* Gen AI  */
+  .genAiContainerBox{
+    justify-content: flex-start;
+    background:#1a1a1a;
 
+  }
+  .genAiContainer{
+    width: 100%;
+    border-radius: 0px;
+  }
+  .gradient-text{
+    font-size: 30px;
+  }
+  .subtext{
+    font-size: 25px;
+  }
 
    /* Bottom Mobile Navigation */
    .mobNav{

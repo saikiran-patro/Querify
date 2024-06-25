@@ -86,16 +86,22 @@ def create_app():
             socketio.emit('dislike_update_comment_count', {'comment_id': comment_id, 'count': new_count})
         else:
             socketio.emit('dislike_update_comment_count', {'comment_id': comment_id, 'count': 0})
-
+    messages = [
+    {'role':'user',
+     'parts': ["Briefly explain how a computer works to a young child."]}]
     @socketio.on('dial_prompt')
     def dialog_prompt(data):
         prompt=data.get('query')
-        print("This is the user requested prompt",prompt)
+        
         try:
 
-            response = model.generate_content(prompt)
+            messages.append({'role':'user',
+                 'parts':[prompt]})
+           
+            response = model.generate_content(messages)
+            
             socketio.emit('response_prompt', {'response':response.text})
-            print(response.text)
+          
         except:
             
             socketio.emit('response_prompt', {'response': 'Error generating response'})

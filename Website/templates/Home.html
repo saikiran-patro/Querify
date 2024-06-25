@@ -24,8 +24,8 @@
 
     <nav class="navContainer" >
       <div class="leftHeader">
-        <img src="{{ url_for('static', filename='Images/LogoNew.png') }}" alt="Querify Logo"/>&nbsp;
-        <span style="font-size: 18px;;">Querify</span>
+        <a href="/" ><img src="{{ url_for('static', filename='Images/LogoNew.png') }}" alt="Querify Logo"/>&nbsp;
+        <span style="font-size: 18px;;">Querify</span></a>
       </div>
       <div class="rightHeader">
 
@@ -110,6 +110,7 @@
     <div class="mobNav">
       <a href="/"><img src="{{ url_for('static', filename='Images/Mobile/Home.svg')}}" alt="Home"> </a>
       <img id="searchMob" src="{{ url_for('static', filename='Images/Mobile/Search.svg')}}" alt="Search">
+      
       <a href="/post" ><img src="{{ url_for('static', filename='Images/Mobile/Post.svg')}}" alt="Post"> </a>
       <a href="/profile" ><img src="{{ url_for('static', filename='Images/Mobile/Profile.svg')}}" alt="Profile"> </a>
 
@@ -121,7 +122,7 @@
     </div>
     <div class="genAiContainerBox">
       <div class="genAiContainer">
-        <h1 class="gradient-text">Hello, Sai Kiran</h1>
+        <h1 class="gradient-text">Hello, {% if current_user.is_authenticated %}{{ current_user.firstName }}{% endif %}</h1>
         <p class="subtext">How can I help you today?</p>
         <div class="aiChatContainer">
                 
@@ -130,7 +131,7 @@
       
         <div class="prompt">
           <input id="promptBox" type="text" placeholder="Enter a prompt here" />
-          <button id="promptSearch">&#128269;</button> <!-- Unicode character for a search icon -->
+          <button id="promptSearch"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#fedcf8"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg></button> <!-- Unicode character for a search icon -->
           
         </div>
       </div>

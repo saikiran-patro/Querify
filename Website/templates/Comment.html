@@ -12,9 +12,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.bubble.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.1/dist/quill.js"></script>
-    <script src="{{ url_for('static',filename='Scripts/main.js') }}"  defer ></script>
+    <script src="{{ url_for('static',filename='Scripts/main.js') }}" type="module" defer ></script>
     <script src="{{ url_for('static',filename='Scripts/Comment.js') }}"  defer ></script>
     <script src="{{ url_for('static',filename='Scripts/Mobile.js') }}"  defer ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/remarkable/2.0.1/remarkable.js" integrity="sha512-B8tur8RfpWsXj+wGTAlM4u/IOtCd9ViFf+qZh0DEi3s5h8119+kc2RxVd+T+49Or1pdqIl2ODQQXbRH4d1EMWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <title>Querify</title>
 </head>
@@ -23,8 +26,8 @@
     <header>
       <nav class="navContainer" >
         <div class="leftHeader">
-          <img src="{{ url_for('static', filename='Images/LogoNew.png') }}" alt="Querify Logo"/>&nbsp;
-          <span style="font-size: 18px;;">Querify</span>
+          <a href="/" ><img src="{{ url_for('static', filename='Images/LogoNew.png') }}" alt="Querify Logo"/>&nbsp;
+            <span style="font-size: 18px;;">Querify</span></a>
         </div>
         <div class="rightHeader">
             <form action="/search" method="POST" class="form-inline my-2 my-lg-0">
@@ -32,6 +35,12 @@
                 <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
               </form>
           <button class="postButton" onclick="window.location.href='/post'"><img src="{{ url_for('static', filename='Images/Post.svg')}}" alt="post button"/>Post</button>
+          <button class=" aiButton relative inline-flex h-12 overflow-hidden rounded-md p-[3px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50" >
+            <span class="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#db696d_0%,#ab6eb3_50%,#3c93db_70%,#db696d_100%)]"></span>
+            <span class="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-md bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+              Ask Ai <img class="aiLogo" src="{{ url_for('static', filename='Images/google-bard-1.svg')}}" alt="Ai Logo"> 
+            </span>
+          </button>
           {% if current_user.is_authenticated %}
      
           <a id="userName" href="/profile"> {{ current_user.firstName }}</a>
@@ -229,7 +238,28 @@
       <div class="errorMessage" >The message</div>
       <img class="closeLogo" alt="closePopup" src="{{ url_for('static', filename='Images/Close.svg') }}">
   </div>
+  <div class="genAiContainerBox">
+    <div class="genAiContainer">
+      <h1 class="gradient-text">Hello, {% if current_user.is_authenticated %}{{ current_user.firstName }}{% endif %}</h1>
+      <p class="subtext">How can I help you today?</p>
+      <div class="aiChatContainer">
+              
 
+      </div>
+    
+      <div class="prompt">
+        <input id="promptBox" type="text" placeholder="Enter a prompt here" />
+        <button id="promptSearch"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#fedcf8"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg></button> <!-- Unicode character for a search icon -->
+        
+      </div>
+    </div>
+    <button class=" aiBackButton relative inline-flex h-12 overflow-hidden rounded-md p-[3px] focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 focus:ring-offset-slate-50">
+      <span class="absolute inset-[-1000%] animate-[spin_2s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#db696d_0%,#ab6eb3_50%,#3c93db_70%,#db696d_100%)]"></span>
+      <span class="inline-flex h-full w-full cursor-pointer items-center justify-center rounded-md bg-slate-950 px-3 py-1 text-sm font-medium text-white backdrop-blur-3xl">
+       <img class="aiBack" src="/static/Images/back.svg" alt="Ai Back">&nbsp;Back 
+      </span>
+    </button>
+  </div>
  
   
 </body>
