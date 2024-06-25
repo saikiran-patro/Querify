@@ -6,3 +6,4 @@ datetime
 pytz
 tzlocal
 google-generativeai
+flask_humanize
