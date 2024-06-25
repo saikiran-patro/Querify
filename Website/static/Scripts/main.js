@@ -81,8 +81,7 @@ promptSearchButton.addEventListener("click", () => {
 socket.on('response_prompt', function(data) {
   if (data && data.response) {
     const response = data.response;
-    console.log('response is emitted');
-    console.log(response);
+    
     const remarkableObject = window.remarkable;
     
     // Create a new instance of remarkable
