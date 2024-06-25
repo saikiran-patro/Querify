@@ -5,3 +5,4 @@ Flask-SocketIO
 datetime
 pytz
 tzlocal
+google-generativeai
